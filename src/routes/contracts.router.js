@@ -13,7 +13,15 @@ export default class ContractsRouter extends Router {
             ]),
             save
         );
-        this.put('/:cid', [accessRolesEnum.PUBLIC], passportStrategiesEnum.NOTHING, update);
+
+        this.put('/:cid', [accessRolesEnum.PUBLIC], passportStrategiesEnum.NOTHING, uploader.fields([
+                { name: 'contract_file', maxCount: 1 },
+                { name: 'image_dni', maxCount: 1 }
+            ]),
+            update
+        );
+
+        //this.put('/:cid', [accessRolesEnum.PUBLIC], passportStrategiesEnum.NOTHING, update);
         this.delete('/:cid', [accessRolesEnum.PUBLIC], passportStrategiesEnum.NOTHING, eliminate);
     }
 }

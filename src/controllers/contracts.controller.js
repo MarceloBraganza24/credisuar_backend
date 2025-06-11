@@ -1,6 +1,7 @@
 import * as contractsService from '../services/contracts.service.js';
 import fs from 'fs';
 import path from 'path';
+import { __mainDirname } from '../utils/utils.js'; // ajustá la ruta
 
 const getAll = async (req, res) => {
     try {
@@ -61,30 +62,70 @@ const save = async (req, res) => {
     }
 };
 
-
 const update = async (req, res) => {
     try {
-        const { cid } = req.params;
-        const contractToReplace = req.body;
-        if(!contractToReplace.title || !contractToReplace.stock || !contractToReplace.description || !contractToReplace.price || !contractToReplace.thumbnail || !contractToReplace.category || !contractToReplace.code ||!contractToReplace.owner) {
-            return res.status(400).send({ status: 'error', message: 'Incomplete values' });
+        const contractId = req.params.cid;
+
+        const {
+            first_name,
+            last_name,
+            dni,
+            phoneNumber
+        } = req.body;
+
+        const existingContract = await contractsService.getById(contractId);
+
+        if (!existingContract) {
+            return res.status(404).json({ error: 'Contrato no encontrado.' });
         }
-        if(req.user.role === 'premium') {
-            if(contractToReplace.owner === req.user.email) {
-                await contractsService.update(cid, contractToReplace);
-                res.send({ data: `El producto con ID ${cid} se modificó correctamente` });
-            } else {
-                res.send({ data: 'Este usuario no tiene permitido modificar productos' });
+
+        // Verificamos si vienen archivos nuevos
+        const newContractFile = req.files['contract_file']?.[0];
+        const newDniImage = req.files['dni_image']?.[0];
+
+        let contract_file = existingContract.contract_file;
+        let image_dni = existingContract.image_dni;
+
+        // Si hay nuevo archivo de contrato
+        if (newContractFile) {
+            // Eliminamos el archivo anterior si existe
+            const oldContractPath = path.join(__mainDirname, contract_file);
+            if (fs.existsSync(oldContractPath)) {
+                fs.unlinkSync(oldContractPath);
             }
-        } else if(req.user.role === 'admin') {
-            await contractsService.update(cid, contractToReplace);
-            res.send({ data: `El producto con ID ${cid} se modificó correctamente` });
+            contract_file = newContractFile.path.replace(/\\/g, '/');
         }
+
+        // Si hay nueva imagen de DNI
+        if (newDniImage) {
+            const oldDniImagePath = path.join(__mainDirname, image_dni);
+            if (fs.existsSync(oldDniImagePath)) {
+                fs.unlinkSync(oldDniImagePath);
+            }
+            image_dni = newDniImage.path.replace(/\\/g, '/');
+        }
+
+        const updatedData = {
+            first_name,
+            last_name,
+            dni,
+            phoneNumber,
+            contract_file,
+            image_dni
+        };
+
+        const updatedContract = await contractsService.update(contractId, updatedData);
+
+        res.status(200).json({
+            message: 'Contrato actualizado con éxito.',
+            contract: updatedContract
+        });
+
     } catch (error) {
-        res.sendServerError(error.message);
-        req.logger.error(error.message);
+        console.error('Error al actualizar el contrato:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
-}
+};
 
 const eliminate = async (req, res) => {
     try {

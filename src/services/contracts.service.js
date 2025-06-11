@@ -5,8 +5,8 @@ const contractsDao = new Contracts();
 const contractsRepository = new ContractsRepository(contractsDao);
 
 const getById = async(cid) => {
-    const contracts = await contractsRepository.getById(cid);
-    return contracts;
+    const contract = await contractsRepository.getById(cid);
+    return contract;
 }
 
 const getAll = async(page) => {
@@ -17,8 +17,8 @@ const save = async(contract) => {
     const contractSaved = await contractsRepository.save(contract);
     return contractSaved;
 }
-const update = async(cid, contractsToReplace) => {
-    const contractUpdated = await contractsRepository.update(cid, contractsToReplace);
+const update = async(cid, contractToReplace) => {
+    const contractUpdated = await contractsRepository.update(cid, contractToReplace);
     return contractUpdated;
 }
 const eliminate = async(cid) => {
