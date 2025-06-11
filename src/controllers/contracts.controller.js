@@ -26,19 +26,41 @@ const getById = async (req, res) => {
 
 const save = async (req, res) => {
     try {
-        const parsedData = JSON.parse(req.body.data); // viene como string
-        const images = req.files; // multer procesa esto
+        const {
+            first_name,
+            last_name,
+            dni,
+            phoneNumber
+        } = req.body;
 
-        console.log(parsedData)
-        console.log(' ')
-        console.log(images)
-        // const updatedConfig = await contractsService.save(newSettings);
-        // res.json(updatedConfig);
+        const contract_file = req.files['contract_file']?.[0];
+        const image_dni = req.files['image_dni']?.[0];
+
+        if (!contract_file || !image_dni) {
+            return res.status(400).json({ error: 'Faltan archivos requeridos.' });
+        }
+
+        const newContract = {
+            first_name,
+            last_name,
+            dni,
+            phoneNumber,
+            contract_file: contract_file?.path.replace(/\\/g, '/'),
+            image_dni: image_dni?.path.replace(/\\/g, '/')
+        };
+        //console.log(newContract)
+        const contract = await contractsService.save(newContract);
+        res.sendSuccessNewResourse(contract);
+        //await newContract.save();
+
+        //res.status(201).json({ message: 'Contrato creado exitosamente', contract: newContract });
+
     } catch (error) {
-        console.error('Error actualizando configuración del sitio:', error);
-        res.status(500).json({ message: 'Error actualizando configuración del sitio' });
+        console.error('Error al guardar el contrato:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
 
 const update = async (req, res) => {
     try {

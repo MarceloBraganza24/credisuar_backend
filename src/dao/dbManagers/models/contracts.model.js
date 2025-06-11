@@ -4,12 +4,12 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 const contractsCollection = 'contracts';
 
 const contractsSchema = new mongoose.Schema({
-    nombre: { type: String, required: true },
-    apellido: { type: String, required: true },
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
     dni: { type: String, required: true },
-    telefono: { type: String, required: true },
-    pdfUrl: { type: String, required: true },     // Ruta al archivo PDF
-    dniImagenUrl: { type: String, required: true }, // Ruta a la imagen del DNI
+    phoneNumber: { type: String, required: true },
+    contract_file: { type: String, required: true },     // Ruta al archivo PDF
+    image_dni: { type: String, required: true }, // Ruta a la imagen del DNI
     createdAt: { type: Date, default: Date.now }
 });
 

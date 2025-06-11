@@ -13,8 +13,8 @@ const getAll = async(page) => {
     const contracts = await contractsRepository.getAll(page);
     return contracts;
 }
-const save = async(contracts) => {
-    const contractSaved = await contractsRepository.save(contracts);
+const save = async(contract) => {
+    const contractSaved = await contractsRepository.save(contract);
     return contractSaved;
 }
 const update = async(cid, contractsToReplace) => {
