@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+/* import mongoose from 'mongoose';
 import { contractsModel } from '../src/dao/dbManagers/models/contracts.model.js'
 
 const firstNames = ['Marcelo', 'Lucía', 'Carlos', 'Ana', 'Luis', 'Martina', 'Diego', 'Paula', 'Jorge', 'Camila'];
@@ -39,3 +39,4 @@ const main = async () => {
 };
 
 main();
+ */
