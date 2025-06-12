@@ -13,7 +13,35 @@ const getAll = async (req, res) => {
         req.logger.error(error.message);
     }
 } 
+const getAllByPage = async (req, res) => {
+    try {
+        const { page = 1, limit = 20, search = "", field = "" } = req.query;
 
+        let query = {};
+        if (search) {
+            if (field === 'all') {
+                query = {
+                    $or: [
+                        { first_name: { $regex: search, $options: 'i' } },
+                        { last_name: { $regex: search, $options: 'i' } },
+                        { phoneNumber: { $regex: search, $options: 'i' } },
+                        { dni: { $regex: search, $options: 'i' } },
+                        /* { dni: isNaN(search) ? undefined : Number(search) }, */
+                    ].filter(Boolean) // elimina los undefined
+                };
+            } /* else if (['dni'].includes(field)) {
+                query[field] = isNaN(search) ? undefined : Number(search);
+            } */ else {
+                query[field] = { $regex: search, $options: "i" };
+            }
+        }
+        const contracts = await contractsService.getAllByPage(query, { page, limit });
+        res.sendSuccess(contracts);
+    } catch (error) {
+        res.sendServerError(error.message);
+        req.logger.error(error.message);
+    }
+};
 const getById = async (req, res) => {
     try {
         const { cid } = req.params;            
@@ -130,18 +158,8 @@ const update = async (req, res) => {
 const eliminate = async (req, res) => {
     try {
         const { cid } = req.params;
-        const contract = await contractsService.getById(cid);
-        if(req.user.role === 'premium') {
-            if(contract.owner === req.user.email) {
-                await contractsService.eliminate(cid);
-                res.send({ data: `El contrato con ID ${cid} se eliminó correctamente` });
-            } else {
-                res.send({ data: 'Este usuario no tiene permitido eliminar contratos' });
-            }
-        } else if(req.user.role === 'admin') {
-            await contractsService.eliminate(pid);
-            res.send({ data: `El contrato con ID ${cid} se eliminó correctamente` });
-        }
+        await contractsService.eliminate(cid);
+        res.send({ data: `El contrato con ID ${cid} se eliminó correctamente` });
     } catch (error) {
         res.sendServerError(error.message);
         req.logger.error(error.message);
@@ -150,6 +168,7 @@ const eliminate = async (req, res) => {
 
 export {
     getAll,
+    getAllByPage,
     getById,
     save,
     update,

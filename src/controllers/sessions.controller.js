@@ -3,7 +3,7 @@ import { UserByEmailExists, InvalidCredentials,ExpiredToken } from "../utils/cus
 import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
 
-const singIn = async (req, res) => {
+const signIn = async (req, res) => {
     try {
         const { first_name ,last_name, email, password,user_datetime } = req.body;
         if(!first_name || !last_name || !email || !password || !user_datetime) return res.sendClientError('incomplete values');
@@ -71,7 +71,7 @@ const current = async(req,res) =>{
 }
 
 export {
-    singIn,
+    signIn,
     login,
     logout,
     current

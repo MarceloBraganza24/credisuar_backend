@@ -10,7 +10,9 @@ const contractsSchema = new mongoose.Schema({
     phoneNumber: { type: String, required: true },
     contract_file: { type: String, required: true },     // Ruta al archivo PDF
     image_dni: { type: String, required: true }, // Ruta a la imagen del DNI
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    deleted: { type: Boolean, default: false },
+    deletedAt: { type: Date, default: null }
 });
 
 contractsSchema.plugin(mongoosePaginate);

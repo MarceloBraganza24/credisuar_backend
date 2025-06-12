@@ -8,7 +8,10 @@ const getById = async(cid) => {
     const contract = await contractsRepository.getById(cid);
     return contract;
 }
-
+const getAllByPage = async(query, { page, limit }) => {
+    const contracts = await contractsRepository.getAllByPage(query, { page, limit });
+    return contracts;
+}
 const getAll = async(page) => {
     const contracts = await contractsRepository.getAll(page);
     return contracts;
@@ -29,6 +32,7 @@ const eliminate = async(cid) => {
 export {
     getById,
     getAll,
+    getAllByPage,
     save,
     update,
     eliminate

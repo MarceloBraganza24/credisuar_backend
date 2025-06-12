@@ -9,7 +9,13 @@ export default class Contracts {
         return contract; 
     }
     getAll = async (page) => {
-        const contracts = await contractsModel.paginate({}, {limit: 5, page, lean: true});
+        const contracts = await contractsModel.paginate({}, {limit: 20, page, lean: true});
+        return contracts; 
+    }
+    getAllByPage = async (query = {}, { page, limit }) => {
+        const fullQuery = { ...query, deleted: false };
+
+        const contracts = await contractsModel.paginate(fullQuery, { page, limit });
         return contracts; 
     }
     save = async (contract) => {

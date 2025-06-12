@@ -10,6 +10,10 @@ export default class ContractsRepository {
         const contracts = await this.dao.getAll(page);
         return contracts;
     }
+    getAllByPage = async(query, { page, limit }) => {
+        const contracts = await this.dao.getAllByPage(query, { page, limit });
+        return contracts;
+    }
     save = async(contract) => {
         const contractSaved = await this.dao.save(contract);
         return contractSaved;
